@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate, login as auth_login
 from django.contrib.auth.forms import UserCreationForm
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserLoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -49,3 +49,20 @@ def register(request):
     else:
         form = UserRegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('quiz_list')  # Redirect to the home page or dashboard
+            else:
+                # Handle invalid login
+                return render(request, 'registration/login.html', {'form': form, 'error': 'Invalid username or password'})
+    else:
+        form = UserLoginForm()
+    return render(request, 'registration/login.html', {'form': form})
