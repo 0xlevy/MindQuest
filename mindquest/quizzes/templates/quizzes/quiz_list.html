@@ -1,0 +1,15 @@
+<!-- quizzes/templates/quizzes/quiz_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quizzes</title>
+</head>
+<body>
+    <h1>Available Quizzes</h1>
+    <ul>
+        {% for quiz in quizzes %}
+            <li><a href="{% url 'quiz_detail' quiz.id %}">{{ quiz.title }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
