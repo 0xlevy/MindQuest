@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import UserRegistrationForm, UserLoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+from .models import UserQuizResult
 # quizzes/views.py
 from django.shortcuts import render, get_object_or_404
 from .models import Quiz, Question, Answer
@@ -76,3 +76,21 @@ def user_login(request):
     else:
         form = UserLoginForm()
     return render(request, 'registration/login.html', {'form': form})
+
+
+@login_required
+def quizzes_view(request):
+    user = request.user
+    
+    # Retrieve current score and quizzes completed
+    current_score = UserQuizResult.objects.filter(user=user).aggregate(total_score=sum('score'))['total_score'] or 0
+    quizzes_completed = UserQuizResult.objects.filter(user=user).count()
+    
+    context = {
+        'user': user,
+        'current_score': current_score,
+        'quizzes_completed': quizzes_completed,
+        'quizzes': Quiz.objects.all(),  # Retrieve quizzes as needed
+    }
+    
+    return render(request, 'quizzes/quiz_list.html', context)
