@@ -52,8 +52,10 @@ def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            auth_login(request, user)
             return redirect('quiz_list')
     else:
         form = UserRegistrationForm()
@@ -68,9 +70,8 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 auth_login(request, user)
-                return redirect('quiz_list')  # Redirect to the home page or dashboard
+                return redirect('quiz_list')
             else:
-                # Handle invalid login
                 return render(request, 'registration/login.html', {'form': form, 'error': 'Invalid username or password'})
     else:
         form = UserLoginForm()

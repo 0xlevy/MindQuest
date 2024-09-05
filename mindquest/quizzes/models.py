@@ -1,4 +1,3 @@
-# quizzes/models.py
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -18,5 +17,4 @@ class UserQuizResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     score = models.IntegerField()
-    total_questions = models.IntegerField(default=0)  # Provide a default value
-    completed_at = models.DateTimeField(auto_now_add=True)
+    total_questions = models.IntegerField(default=0)  # Provide a default value   
